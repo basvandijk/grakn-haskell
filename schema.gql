@@ -1,0 +1,16 @@
+insert
+
+word isa entity-type
+    has-resource name
+    plays-role stimulus
+    plays-role response;
+
+name isa resource-type
+    datatype string;
+
+association isa relation-type
+    has-role stimulus
+    has-role response;
+
+stimulus isa role-type;
+response isa role-type;
