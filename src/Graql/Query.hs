@@ -1,106 +1,163 @@
-{-# LANGUAGE OverloadedStrings #-}
+module Graql.Query
+    ( MatchQuery
+    , Pattern
+    , Value (..)
+    , Var
+    , Id
+    , match
+    , select
+    , limit
+    , distinct
+    , isa
+    , rel
+    , has
+    , (.:)
+    , gid
+    , var
+    , anon
+    , (<:)
+    ) where
 
-module Graql.Query where
+import           Data.List       (intercalate)
+import           Data.Scientific (Scientific)
+import           Data.Text       (Text, unpack)
 
-import Data.List (intercalate)
-import Data.String (IsString, fromString)
-import           Data.Scientific    (Scientific)
-import           Data.Text          (Text, pack)
+newtype Id = Id Text
 
-data Value = String Text | Number Scientific | Bool Bool
+newtype Var = Var Text deriving (Eq, Ord)
 
-type VarName = String
+data Value = ValueString Text | ValueNumber Scientific | ValueBool Bool
 
-data VarOrId = Var VarName | Id String
+data VarOrId = VarName Var | IdName Id
 
-data MatchQuery = MatchQueryBase Pattern
-                | MatchQuerySelect MatchQuery [VarName]
-                | MatchQueryLimit MatchQuery Integer
-                | MatchQueryDistinct MatchQuery
+data MatchQuery = Match [Pattern]
+                | Select MatchQuery [Var]
+                | Limit MatchQuery Integer
+                | Distinct MatchQuery
 
-data Pattern = VarPattern (Maybe VarOrId) [Property] | Disjunction Pattern Pattern | Conjunction [Pattern]
+data Pattern = VarPattern (Maybe VarOrId) [Property]
+             | Disjunction Pattern Pattern
+             | Conjunction [Pattern]
 
 data Property = Isa VarOrId
-              | IdProperty String
+              | IdProperty Id
               | Rel [Casting]
-              | Has String (Either Value VarName)
+              | Has Id (Either Value Var)
 
 data Casting = Casting (Maybe VarOrId) VarOrId
 
+class IsVarOrId a where
+    toVarOrId :: a -> VarOrId
+
+instance IsVarOrId Var where
+    toVarOrId = VarName
+
+instance IsVarOrId Id where
+    toVarOrId = IdName
+
+class IsCasting a where
+    toCasting :: a -> Casting
+
+instance IsCasting Casting where
+    toCasting = id
+
+instance IsCasting VarOrId where
+    toCasting = Casting Nothing
+
+instance IsCasting Var where
+    toCasting = toCasting . VarName
+
+class IsResource a where
+    toResource :: a -> Either Value Var
+
+instance IsResource Var where
+    toResource = Right
+
+instance IsResource Text where
+    toResource = Left . ValueString
+
+instance IsResource Scientific where
+    toResource = Left . ValueNumber
+
+instance IsResource Bool where
+    toResource = Left . ValueBool
+
+instance Show Id where
+    show (Id text) = unpack text
+
+instance Show Var where
+    show (Var v) = '$' : unpack v
+
 instance Show VarOrId where
-    show (Var varName) = "$" ++ varName
-    show (Id string) = string
+    show (VarName var) = show var
+    show (IdName i)    = show i
 
 instance Show MatchQuery where
-    show (MatchQueryBase (Conjunction patterns)) = "match " ++ interList " " patterns
-    show (MatchQueryBase pattern               ) = "match " ++ show pattern
-    show (MatchQuerySelect mq vars             ) = show mq ++ " select " ++ intercalate ", " (map ('$':) vars) ++ ";"
-    show (MatchQueryLimit mq limit             ) = show mq ++ " limit " ++ show limit ++ ";"
-    show (MatchQueryDistinct mq                ) = show mq ++ " distinct;"
+    show (Match patts) = "match " ++ interList " " patts
+    show (Select mq vars ) = show mq ++ " select " ++ commas vars ++ ";"
+    show (Limit mq limit ) = show mq ++ " limit " ++ show limit ++ ";"
+    show (Distinct mq    ) = show mq ++ " distinct;"
 
 instance Show Pattern where
-    show (VarPattern (Just varOrId) properties) = show varOrId ++ " " ++ interList ", " properties ++ ";"
-    show (VarPattern Nothing        properties) = interList ", " properties ++ ";"
-    show (Disjunction left right) = show left ++ " or " ++ show right ++ ";"
-    show (Conjunction patterns) = "{" ++ interList " " patterns ++  "};"
+    show (VarPattern (Just var) props) = show var ++ " " ++ commas props ++ ";"
+    show (VarPattern Nothing    props) = commas props ++ ";"
+    show (Disjunction l r            ) = show l ++ " or " ++ show r ++ ";"
+    show (Conjunction patts          ) = "{" ++ interList " " patts ++  "};"
 
 instance Show Property where
-    show (Isa varOrId) = "isa " ++ show varOrId
-    show (IdProperty string) = "id " ++ string
-    show (Rel castings) = "(" ++ interList ", " castings ++ ")"
-    show (Has rt (Left value)) = "has " ++ rt ++ " " ++ show value
-    show (Has rt (Right varName)) = "has " ++ rt ++ " $" ++ varName
+    show (Isa varOrId         ) = "isa " ++ show varOrId
+    show (IdProperty i        ) = "id " ++ show i
+    show (Rel castings        ) = "(" ++ commas castings ++ ")"
+    show (Has rt (Left  value)) = "has " ++ show rt ++ " " ++ show value
+    show (Has rt (Right var  )) = "has " ++ show rt ++ " " ++ show var
 
 instance Show Casting where
-    show (Casting (Just roletype) roleplayer) = show roletype ++ ": " ++ show roleplayer
-    show (Casting Nothing         roleplayer) = show roleplayer
+    show (Casting (Just rt) rp) = show rt ++ ": " ++ show rp
+    show (Casting Nothing   rp) = show rp
 
 instance Show Value where
-    show (String text) = show text
-    show (Number num) = show num
-    show (Bool bool) = show bool
+    show (ValueString text) = show text
+    show (ValueNumber num ) = show num
+    show (ValueBool   bool) = show bool
 
-instance IsString Casting where
-    fromString = rp
+commas :: Show a => [a] -> String
+commas = interList ", "
 
 interList :: Show a => String -> [a] -> String
 interList sep = intercalate sep . map show
 
 match :: [Pattern] -> MatchQuery
-match = MatchQueryBase . Conjunction
+match = Match
 
-select :: MatchQuery -> [VarName] -> MatchQuery
-select = MatchQuerySelect
+select :: MatchQuery -> [Var] -> MatchQuery
+select = Select
 
 limit :: MatchQuery -> Integer -> MatchQuery
-limit = MatchQueryLimit
+limit = Limit
 
 distinct :: MatchQuery -> MatchQuery
-distinct = MatchQueryDistinct
+distinct = Distinct
 
-isa :: String -> Property
-isa = Isa . Id
+isa :: Id -> Property
+isa = Isa . IdName
 
-rel :: [Casting] -> Property
-rel = Rel
+rel :: IsCasting a => [a] -> Property
+rel = Rel . map toCasting
 
-has :: String -> Value -> Property
-has rt value = Has rt (Left value)
+has :: IsResource a => Id -> a -> Property
+has rt = Has rt . toResource
 
-hasString :: String -> String -> Property
-hasString rt value = Has rt (Left (String (pack value)))
+(.:) :: (IsVarOrId a, IsVarOrId b) => a -> b -> Casting
+rt .: rp = Casting (Just $ toVarOrId rt) (toVarOrId rp)
 
-hasVar :: String -> VarName -> Property
-hasVar rt varName = Has rt (Right varName)
+gid :: Text -> Id
+gid = Id
 
-(.:) :: String -> VarName -> Casting
-rt .: rp = Casting (Just (Id rt)) (Var rp)
+var :: Text -> Var
+var = Var
 
-rp :: VarName -> Casting
-rp = Casting Nothing . Var
+anon :: [Property] -> Pattern
+anon = VarPattern Nothing
 
-var :: [Property] -> Pattern
-var = VarPattern Nothing
-
-(<:) :: String -> [Property] -> Pattern
-var <: ps = VarPattern (Just (Var var)) ps
+(<:) :: IsVarOrId a => a -> [Property] -> Pattern
+var <: ps = VarPattern (Just $ toVarOrId var) ps

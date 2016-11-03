@@ -1,51 +1,69 @@
-{-# LANGUAGE OverloadedStrings #-}
+module Graql.Shell
+    ( Concept
+    , Result
+    , cid
+    , ctype
+    , value
+    , runFile
+    , runMatch
+    , migrateCsv
+    ) where
 
-module Graql.Shell where
-
-import Graql.Query
-import           Data.Aeson         (FromJSON, eitherDecodeStrict, parseJSON, (.:?))
+import           Data.Aeson         (FromJSON, FromJSONKey,
+                                     FromJSONKeyFunction (FromJSONKeyText),
+                                     eitherDecodeStrict, parseJSON, (.:?))
 import qualified Data.Aeson         as Aeson
 import           Data.Map           (Map)
-import           Data.Scientific    (Scientific)
-import           Data.Text          (Text, pack)
+import           Data.Text          (pack)
 import           Data.Text.Encoding (encodeUtf8)
-
-import           System.IO          (hGetLine)
-import           System.Process     (CreateProcess, proc, callProcess, readProcessWithExitCode)
-import System.Exit (ExitCode(ExitSuccess))
+import           Graql.Query
+import           System.Process     (callProcess, readProcessWithExitCode)
 
 type Error = String
-type Result = Map VarName Concept
 
-data Concept = Concept {
-    cid   :: String,
-    ctype   :: Maybe String,
-    value :: Maybe Value
-} deriving Show
+type Result = Map Var Concept
+
+data Concept = Concept { cid :: Id, ctype :: Maybe Id, value :: Maybe Value }
+  deriving Show
+
+instance FromJSON Id where
+  parseJSON (Aeson.String s) = return $ gid s
 
 instance FromJSON Concept where
-    parseJSON (Aeson.Object obj) = Concept <$> (obj Aeson..: "id") <*> (obj .:? "isa") <*> (obj .:? "value")
+  parseJSON (Aeson.Object obj) =
+    Concept <$> (obj Aeson..: "id") <*> (obj .:? "isa") <*> (obj .:? "value")
+
+instance FromJSON Var where
+  parseJSON (Aeson.String s) = return $ var s
+
+instance FromJSONKey Var where
+  fromJSONKey = FromJSONKeyText var
 
 instance FromJSON Value where
-    parseJSON (Aeson.String s) = return $ String s
-    parseJSON (Aeson.Number n) = return $ Number n
-    parseJSON (Aeson.Bool b)   = return $ Bool b
+  parseJSON (Aeson.String s) = return $ ValueString s
+  parseJSON (Aeson.Number n) = return $ ValueNumber n
+  parseJSON (Aeson.Bool   b) = return $ ValueBool b
 
 runFile :: FilePath -> IO ()
 runFile path = callProcess "graql.sh" ["-f", path]
 
 migrateCsv :: FilePath -> FilePath -> String -> IO ()
-migrateCsv file template delimiter = callProcess "migration.sh" ["csv", "--file", file, "--template", template, "-d", delimiter]
+migrateCsv file template delimiter =
+  callProcess "migration.sh" args
+  where args = ["csv", "-f", file, "-t", template, "-d", delimiter, "-b", "25"]
 
-runMatch :: MatchQuery -> IO (Either Error [Result])
+runMatch :: MatchQuery -> IO [Result]
 runMatch q = do
-    result <- runGraql q
-    return $ result >>= parseResults
+  result <- parseResults <$> runGraql q
+  either fail return result
 
-runGraql :: MatchQuery -> IO (Either Error String)
+runGraql :: MatchQuery -> IO String
 runGraql q = do
-    (exitCode, stdout, stderr) <- readProcessWithExitCode "graql.sh" ["-e", show q, "-o", "json"] ""
-    return $ if length (lines stderr) <= 1 then Right stdout else Left stderr
+  (_, stdout, stderr) <- readProcessWithExitCode "graql.sh" args ""
+  if length (lines stderr) <= 1
+    then return stdout
+    else fail stderr
+  where args = ["-e", show q, "-o", "json"]
 
 parseResults :: String -> Either Error [Result]
 parseResults = mapM parseResult . lines
