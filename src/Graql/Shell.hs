@@ -21,8 +21,10 @@ import           System.Process     (callProcess, readProcessWithExitCode)
 
 type Error = String
 
+-- |A result of a match query, binding variables to concepts
 type Result = Map Var Concept
 
+-- |A concept in the graph
 data Concept = Concept { cid :: Id, ctype :: Maybe Id, value :: Maybe Value }
   deriving Show
 
@@ -44,14 +46,17 @@ instance FromJSON Value where
   parseJSON (Aeson.Number n) = return $ ValueNumber n
   parseJSON (Aeson.Bool   b) = return $ ValueBool b
 
+-- |Run the given file path on the database, ignoring the output
 runFile :: FilePath -> IO ()
 runFile path = callProcess "graql.sh" ["-f", path]
 
+-- |Run the CSV migrator using the given csv file, template file and delimiter
 migrateCsv :: FilePath -> FilePath -> String -> IO ()
 migrateCsv file template delimiter =
   callProcess "migration.sh" args
   where args = ["csv", "-f", file, "-t", template, "-d", delimiter, "-b", "25"]
 
+-- |Run a match query on the graph
 runMatch :: MatchQuery -> IO [Result]
 runMatch q = do
   result <- parseResults <$> runGraql q
