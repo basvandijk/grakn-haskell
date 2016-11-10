@@ -136,12 +136,12 @@ match :: [Pattern] -> MatchQuery
 match = Match
 
 -- |Select variables from a match query, intended to be used infix
-select :: MatchQuery -> [Var] -> MatchQuery
-select = Select
+select :: [Var] -> MatchQuery -> MatchQuery
+select = flip Select
 
 -- |Limit a match query, intended to be used infix
-limit :: MatchQuery -> Integer -> MatchQuery
-limit = Limit
+limit :: Integer -> MatchQuery -> MatchQuery
+limit = flip Limit
 
 -- |Retrieve only distinct results from a match query
 distinct :: MatchQuery -> MatchQuery
