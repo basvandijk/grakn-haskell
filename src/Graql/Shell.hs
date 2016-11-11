@@ -50,11 +50,11 @@ instance FromJSON Value where
 runFile :: FilePath -> IO ()
 runFile path = callProcess "graql.sh" ["-f", path]
 
--- |Run the CSV migrator using the given csv file, template file and delimiter
+-- |Run the CSV migrator using the given csv file, template file and separator
 migrateCsv :: FilePath -> FilePath -> String -> IO ()
-migrateCsv file template delimiter =
+migrateCsv file template separator =
   callProcess "migration.sh" args
-  where args = ["csv", "-f", file, "-t", template, "-d", delimiter, "-b", "25"]
+  where args = ["csv", "-i", file, "-t", template, "-s", separator]
 
 -- |Run a match query on the graph
 runMatch :: MatchQuery -> IO [Result]
