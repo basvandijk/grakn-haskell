@@ -106,10 +106,10 @@ instance Show VarOrId where
     show (IdName i)    = show i
 
 instance Show MatchQuery where
-    show (Match patts) = "match " ++ interList " " patts
-    show (Select mq vars ) = show mq ++ " select " ++ commas vars ++ ";"
-    show (Limit mq limit ) = show mq ++ " limit " ++ show limit ++ ";"
-    show (Distinct mq    ) = show mq ++ " distinct;"
+    show (Match patts   ) = "match " ++ interList " " patts
+    show (Select mq vars) = show mq ++ " select " ++ commas vars ++ ";"
+    show (Limit mq limit) = show mq ++ " limit " ++ show limit ++ ";"
+    show (Distinct mq   ) = show mq ++ " distinct;"
 
 instance Show Pattern where
     show (VarPattern (Just var) props) = show var ++ " " ++ commas props ++ ";"

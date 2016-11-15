@@ -11,12 +11,12 @@ module Graql.Shell
 
 import           Data.Aeson         (FromJSON, FromJSONKey,
                                      FromJSONKeyFunction (FromJSONKeyText),
-                                     eitherDecodeStrict, parseJSON, (.:?))
+                                     eitherDecodeStrict, parseJSON, (.:), (.:?))
 import qualified Data.Aeson         as Aeson
 import           Data.Map           (Map)
 import           Data.Text          (pack)
 import           Data.Text.Encoding (encodeUtf8)
-import           Graql.Query
+import           Graql.Query        hiding ((.:))
 import           System.Process     (callProcess, readProcessWithExitCode)
 
 type Error = String
@@ -33,7 +33,7 @@ instance FromJSON Id where
 
 instance FromJSON Concept where
   parseJSON (Aeson.Object obj) =
-    Concept <$> (obj Aeson..: "id") <*> (obj .:? "isa") <*> (obj .:? "value")
+    Concept <$> (obj .: "id") <*> (obj .:? "isa") <*> (obj .:? "value")
 
 instance FromJSON Var where
   parseJSON (Aeson.String s) = return $ var s
