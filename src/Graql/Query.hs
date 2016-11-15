@@ -18,9 +18,13 @@ module Graql.Query
     , (<:)
     ) where
 
-import           Data.List       (intercalate)
-import           Data.Scientific (Scientific)
-import           Data.Text       (Text, unpack)
+import           Data.List        (intercalate)
+import           Data.Scientific  (Scientific)
+import           Data.Text        (Text, unpack)
+import           Text.Regex.Posix ((=~))
+
+idRegex :: String
+idRegex = "^[a-zA-Z_][a-zA-Z0-9_-]*$"
 
 -- |An ID of something in the graph
 newtype Id = Id Text
@@ -88,7 +92,11 @@ instance IsResource Bool where
     toResource = Left . ValueBool
 
 instance Show Id where
-    show (Id text) = unpack text
+    show (Id text)
+      | str =~ idRegex = str
+      | otherwise      = show text
+        where str = unpack text
+
 
 instance Show Var where
     show (Var v) = '$' : unpack v
