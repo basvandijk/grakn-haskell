@@ -18,11 +18,12 @@ main = hspec $ do
             ~= "match (husband: $x, wife: $y) isa marriage;"
 
     it "a resource query string representation" $
-        match [x `hasText` name $ "Bob"] ~= "match $x has name \"Bob\";"
+        match [x `hasText` firstName $ "Bob"]
+            ~= "match $x has first-name \"Bob\";"
 
     it "multiple patterns" $
-        match [x-:person, y-:name]
-            ~= "match $x isa person; $y isa name;"
+        match [x-:person, y-:firstName]
+            ~= "match $x isa person; $y isa first-name;"
 
     it "select query with type" $
         match [x -: y] & select [x, y]
@@ -41,6 +42,9 @@ main = hspec $ do
     it "reify a relation" $
         match [x <: [y, z]] ~= "match $x ($y, $z);"
 
+    it "match just a variable" $
+        match [x] ~= "match $x;"
+
 
 x :: Var
 x = var "x"
@@ -51,20 +55,20 @@ y = var "y"
 z :: Var
 z = var "z"
 
-person :: Id
-person = gid "person"
+person :: Name
+person = name "person"
 
-name :: Id
-name = gid "name"
+firstName :: Name
+firstName = name "first-name"
 
-marriage :: Id
-marriage = gid "marriage"
+marriage :: Name
+marriage = name "marriage"
 
-husband :: Id
-husband = gid "husband"
+husband :: Name
+husband = name "husband"
 
-wife :: Id
-wife = gid "wife"
+wife :: Name
+wife = name "wife"
 
 infixr 0 ~=
 

@@ -1,14 +1,14 @@
 module Graql
     ( MatchQuery
     , Var
-    , Id
+    , Name
     , Value (..)
     , match
     , select
     , distinct
     , limit
     , var
-    , gid
+    , name
     , isa
     , (-:)
     , (.:)
@@ -26,7 +26,7 @@ import           Graql.Query
 import           Data.Text        (Text)
 
 -- |Specify a property has a particular type
-(-:) :: (IsPattern p, IsVarOrId a) => p -> a -> Pattern
+(-:) :: (IsPattern p, IsVarOrName a) => p -> a -> Pattern
 (-:) = isa
 
 -- |Shorthand to define a relation
@@ -34,5 +34,5 @@ rel :: IsCasting a => [a] -> Pattern
 rel = (var_ <:)
 
 -- |Specify a property has a resource
-hasText :: (IsPattern p) => p -> Id -> Text -> Pattern
+hasText :: (IsPattern p) => p -> Name -> Text -> Pattern
 hasText = has

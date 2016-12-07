@@ -5,13 +5,14 @@ module Graql.Pattern
     , isa
     , (<:)
     , has
+    , toPattern
     ) where
 
 import           Graql.Util
 import           Graql.Property
 
 -- |A pattern to find in the graph
-data Pattern = Pattern (Maybe VarOrId) [Property]
+data Pattern = Pattern (Maybe VarOrName) [Property]
 
 -- |Represents things that can be patterns
 class IsPattern a where
@@ -22,15 +23,15 @@ var_ :: Pattern
 var_ = Pattern Nothing []
 
 -- |Specify a property has a particular type
-isa :: (IsPattern p, IsVarOrId a) => p -> a -> Pattern
-patt `isa` x = addProperty patt (Isa $ toVarOrId x)
+isa :: (IsPattern p, IsVarOrName a) => p -> a -> Pattern
+patt `isa` x = addProperty patt (Isa $ toVarOrName x)
 
 -- |Specify a property is a relation between other variables
 (<:) :: (IsPattern p, IsCasting a) => p -> [a] -> Pattern
 patt <: cs = addProperty patt (Rel $ map toCasting cs)
 
 -- |Specify a property has a resource
-has :: (IsPattern p, IsResource a) => p -> Id -> a -> Pattern
+has :: (IsPattern p, IsResource a) => p -> Name -> a -> Pattern
 has patt rt v = addProperty patt (Has rt $ toResource v)
 
 
@@ -45,6 +46,7 @@ addProperty = addPropToPattern . toPattern
 
 
 instance Show Pattern where
+    show (Pattern (Just v) []   ) = show v ++ ";"
     show (Pattern (Just v) props) = show v ++ " " ++ showProps props ++ ";"
     show (Pattern Nothing  props) = showProps props ++ ";"
 
@@ -52,10 +54,10 @@ instance IsPattern Pattern where
     toPattern = id
 
 instance IsPattern Var where
-    toPattern = toPattern . toVarOrId
+    toPattern = toPattern . toVarOrName
 
-instance IsPattern Id where
-    toPattern = toPattern . toVarOrId
+instance IsPattern Name where
+    toPattern = toPattern . toVarOrName
 
-instance IsPattern VarOrId where
+instance IsPattern VarOrName where
     toPattern v = Pattern (Just v) []

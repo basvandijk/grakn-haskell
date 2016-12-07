@@ -1,17 +1,17 @@
 module Graql.Property
     ( Property (..)
     , Var
-    , Id
-    , VarOrId
+    , Name
+    , VarOrName
     , Value (..)
-    , IsVarOrId
+    , IsVarOrName
     , IsCasting
     , IsResource
     , var
-    , gid
+    , name
     , (.:)
     , rp
-    , toVarOrId
+    , toVarOrName
     , toCasting
     , toResource
     ) where
@@ -27,29 +27,29 @@ import           Data.Aeson       (FromJSON, FromJSONKey,
 import qualified Data.Aeson       as Aeson
 
 -- |A property of a concept
-data Property = Isa VarOrId
-              | IdProperty Id
+data Property = Isa VarOrName
+              | NameProperty Name
               | Rel [Casting]
-              | Has Id (Either Value Var)
+              | Has Name (Either Value Var)
 
 -- |A variable name wildcard that will represent a concept in the results
 data Var = Var Text deriving (Eq, Ord)
 
--- |An ID of something in the graph
-data Id = Id Text
+-- |A name of something in the graph
+data Name = Name Text
 
--- |Something that may be a variable name or an ID
-data VarOrId = VarName Var | IdName Id
+-- |Something that may be a variable name or a type name
+data VarOrName = VarName Var | TypeName Name
 
 -- |A value of a resource
 data Value = ValueString Text | ValueNumber Scientific | ValueBool Bool
 
 -- |A casting, relating a role type and role player
-data Casting = Casting (Maybe VarOrId) VarOrId
+data Casting = Casting (Maybe VarOrName) VarOrName
 
--- |Something that can be converted into a variable or an ID
-class IsVarOrId a where
-    toVarOrId :: a -> VarOrId
+-- |Something that can be converted into a variable or a type name
+class IsVarOrName a where
+    toVarOrName :: a -> VarOrName
 
 -- |Something that can be converted into a casting
 class IsCasting a where
@@ -63,25 +63,25 @@ class IsResource a where
 var :: Text -> Var
 var = Var
 
--- |Create an ID of something in the graph
-gid :: Text -> Id
-gid = Id
+-- |Create a name of something in the graph
+name :: Text -> Name
+name = Name
 
 -- |A casting in a relation between a role type and a role player
-(.:) :: (IsVarOrId a, IsVarOrId b) => a -> b -> Casting
-rt .: player = Casting (Just $ toVarOrId rt) (toVarOrId player)
+(.:) :: (IsVarOrName a, IsVarOrName b) => a -> b -> Casting
+rt .: player = Casting (Just $ toVarOrName rt) (toVarOrName player)
 
 -- |A casting in a relation without a role type
-rp :: IsVarOrId a => a -> Casting
-rp = Casting Nothing . toVarOrId
+rp :: IsVarOrName a => a -> Casting
+rp = Casting Nothing . toVarOrName
 
 
-idRegex :: String
-idRegex = "^[a-zA-Z_][a-zA-Z0-9_-]*$"
+nameRegex :: String
+nameRegex = "^[a-zA-Z_][a-zA-Z0-9_-]*$"
 
 instance Show Property where
-    show (Isa varOrId         ) = "isa " ++ show varOrId
-    show (IdProperty i        ) = "id " ++ show i
+    show (Isa varOrName       ) = "isa " ++ show varOrName
+    show (NameProperty n      ) = "type-name " ++ show n
     show (Rel castings        ) = "(" ++ commas castings ++ ")"
     show (Has rt (Left  value)) = "has " ++ show rt ++ " " ++ show value
     show (Has rt (Right v    )) = "has " ++ show rt ++ " " ++ show v
@@ -95,33 +95,33 @@ instance Show Value where
     show (ValueNumber num ) = show num
     show (ValueBool   bool) = show bool
 
-instance Show Id where
-    show (Id text)
-      | str =~ idRegex = str
+instance Show Name where
+    show (Name text)
+      | str =~ nameRegex = str
       | otherwise      = show text
         where str = unpack text
 
 instance Show Var where
     show (Var v) = '$' : unpack v
 
-instance Show VarOrId where
-    show (VarName v) = show v
-    show (IdName  i) = show i
+instance Show VarOrName where
+    show (VarName  v) = show v
+    show (TypeName t) = show t
 
-instance IsVarOrId Var where
-    toVarOrId = VarName
+instance IsVarOrName Var where
+    toVarOrName = VarName
 
-instance IsVarOrId Id where
-    toVarOrId = IdName
+instance IsVarOrName Name where
+    toVarOrName = TypeName
 
 instance IsCasting Casting where
     toCasting = id
 
-instance IsCasting VarOrId where
+instance IsCasting VarOrName where
     toCasting = Casting Nothing
 
 instance IsCasting Var where
-    toCasting = toCasting . toVarOrId
+    toCasting = toCasting . toVarOrName
 
 instance IsResource Var where
     toResource = Right
@@ -141,8 +141,8 @@ instance FromJSON Value where
   parseJSON (Aeson.Bool   b) = return $ ValueBool b
   parseJSON _                = empty
 
-instance FromJSON Id where
-  parseJSON (Aeson.String s) = return $ gid s
+instance FromJSON Name where
+  parseJSON (Aeson.String s) = return $ name s
   parseJSON _                = empty
 
 instance FromJSON Var where

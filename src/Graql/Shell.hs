@@ -14,13 +14,13 @@ import           Data.Aeson         (FromJSON, eitherDecodeStrict, parseJSON,
                                      (.:), (.:?))
 import qualified Data.Aeson         as Aeson
 import           Data.Map           (Map)
-import           Data.Text          (pack)
+import           Data.Text          (Text, pack)
 import           Data.Text.Encoding (encodeUtf8)
 import           Graql              hiding ((.:))
 import           System.Process     (callProcess, readProcessWithExitCode)
 
 -- |A concept in the graph
-data Concept = Concept { cid :: Id, ctype :: Maybe Id, value :: Maybe Value }
+data Concept = Concept { cid :: Text, cname :: Maybe Name, ctype :: Maybe Name, value :: Maybe Value }
   deriving Show
 
 -- |A result of a match query, binding variables to concepts
@@ -61,5 +61,5 @@ parseResult = eitherDecodeStrict . encodeUtf8 . pack
 
 instance FromJSON Concept where
   parseJSON (Aeson.Object obj) =
-    Concept <$> (obj .: "id") <*> (obj .:? "isa") <*> (obj .:? "value")
+    Concept <$> (obj .: "id") <*> (obj .:? "name") <*> (obj .:? "isa") <*> (obj .:? "value")
   parseJSON _ = empty

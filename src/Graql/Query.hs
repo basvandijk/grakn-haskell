@@ -8,6 +8,7 @@ module Graql.Query
 
 import           Graql.Util
 import           Graql.Pattern
+import           Graql.Property
 
 -- |A Graql 'match' query that finds a pattern in the graph
 data MatchQuery = Match [Pattern]
@@ -16,8 +17,8 @@ data MatchQuery = Match [Pattern]
                 | Distinct MatchQuery
 
 -- |Create a match query by providing a list of patterns
-match :: [Pattern] -> MatchQuery
-match = Match
+match :: IsPattern a => [a] -> MatchQuery
+match = Match . map toPattern
 
 -- |Select variables from a match query, intended to be used infix
 select :: [Var] -> MatchQuery -> MatchQuery
