@@ -3,6 +3,7 @@ module Main where
 import Data.Function ((&))
 import Test.Hspec
 import Graql
+import qualified Example
 
 main :: IO ()
 main = hspec $ do
@@ -44,6 +45,10 @@ main = hspec $ do
 
     it "match just a variable" $
         match [x] ~= "match $x;"
+
+    it "example query output" $
+        Example.query
+            ~= "match $x isa person; (husband: $x, wife: $y) isa marriage; select $y;"
 
 
 x :: Var
