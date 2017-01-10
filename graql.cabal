@@ -5,7 +5,7 @@ description:          A library for building and executing Graql queries on a
                       Grakn knowledge graph.
 license:              Apache-2.0
 license-file:         LICENSE
-homepage:             
+homepage:             https://github.com/graknlabs/graql-haskell
 author:               Felix Chapman
 maintainer:           felix@grakn.ai
 category:             Database,Graphs
