@@ -27,8 +27,8 @@ isa :: (IsPattern p, IsVarOrName a) => p -> a -> Pattern
 patt `isa` x = addProperty patt (Isa $ toVarOrName x)
 
 -- |Specify a property is a relation between other variables
-(<:) :: (IsPattern p, IsCasting a) => p -> [a] -> Pattern
-patt <: cs = addProperty patt (Rel $ map toCasting cs)
+(<:) :: (IsPattern p, IsRolePlayer a) => p -> [a] -> Pattern
+patt <: cs = addProperty patt (Rel $ map toRolePlayer cs)
 
 -- |Specify a property has a resource
 has :: (IsPattern p, IsResource a) => p -> Name -> a -> Pattern
@@ -46,9 +46,8 @@ addProperty = addPropToPattern . toPattern
 
 
 instance Show Pattern where
-    show (Pattern (Just v) []   ) = show v ++ ";"
-    show (Pattern (Just v) props) = show v ++ " " ++ showProps props ++ ";"
-    show (Pattern Nothing  props) = showProps props ++ ";"
+    show (Pattern v []   ) = v `with` "" ++ ";"
+    show (Pattern v props) = v `with` " " ++ showProps props ++ ";"
 
 instance IsPattern Pattern where
     toPattern = id

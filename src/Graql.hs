@@ -30,7 +30,7 @@ import           Data.Text        (Text)
 (-:) = isa
 
 -- |Shorthand to define a relation
-rel :: IsCasting a => [a] -> Pattern
+rel :: IsRolePlayer a => [a] -> Pattern
 rel = (var_ <:)
 
 -- |Specify a property has a resource

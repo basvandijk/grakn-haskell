@@ -5,14 +5,14 @@ module Graql.Property
     , VarOrName
     , Value (..)
     , IsVarOrName
-    , IsCasting
+    , IsRolePlayer
     , IsResource
     , var
     , name
     , (.:)
     , rp
     , toVarOrName
-    , toCasting
+    , toRolePlayer
     , toResource
     ) where
 
@@ -29,7 +29,7 @@ import qualified Data.Aeson       as Aeson
 -- |A property of a concept
 data Property = Isa VarOrName
               | NameProperty Name
-              | Rel [Casting]
+              | Rel [RolePlayer]
               | Has Name (Either Value Var)
 
 -- |A variable name wildcard that will represent a concept in the results
@@ -45,15 +45,15 @@ data VarOrName = VarName Var | TypeName Name
 data Value = ValueString Text | ValueNumber Scientific | ValueBool Bool
 
 -- |A casting, relating a role type and role player
-data Casting = Casting (Maybe VarOrName) VarOrName
+data RolePlayer = RolePlayer (Maybe VarOrName) Var
 
 -- |Something that can be converted into a variable or a type name
 class IsVarOrName a where
     toVarOrName :: a -> VarOrName
 
 -- |Something that can be converted into a casting
-class IsCasting a where
-    toCasting :: a -> Casting
+class IsRolePlayer a where
+    toRolePlayer :: a -> RolePlayer
 
 -- |Something that can be converted into a resource value or variable
 class IsResource a where
@@ -68,27 +68,25 @@ name :: Text -> Name
 name = Name
 
 -- |A casting in a relation between a role type and a role player
-(.:) :: (IsVarOrName a, IsVarOrName b) => a -> b -> Casting
-rt .: player = Casting (Just $ toVarOrName rt) (toVarOrName player)
+(.:) :: IsVarOrName a => a -> Var -> RolePlayer
+rt .: player = RolePlayer (Just $ toVarOrName rt) player
 
 -- |A casting in a relation without a role type
-rp :: IsVarOrName a => a -> Casting
-rp = Casting Nothing . toVarOrName
+rp :: Var -> RolePlayer
+rp = RolePlayer Nothing
 
 
 nameRegex :: String
 nameRegex = "^[a-zA-Z_][a-zA-Z0-9_-]*$"
 
 instance Show Property where
-    show (Isa varOrName       ) = "isa " ++ show varOrName
-    show (NameProperty n      ) = "type-name " ++ show n
-    show (Rel castings        ) = "(" ++ commas castings ++ ")"
-    show (Has rt (Left  value)) = "has " ++ show rt ++ " " ++ show value
-    show (Has rt (Right v    )) = "has " ++ show rt ++ " " ++ show v
-    
-instance Show Casting where
-    show (Casting (Just rt) player) = show rt ++ ": " ++ show player
-    show (Casting Nothing   player) = show player
+    show (Isa varOrName ) = "isa " ++ show varOrName
+    show (NameProperty n) = "type-name " ++ show n
+    show (Rel castings  ) = "(" ++ commas castings ++ ")"
+    show (Has rt value  ) = "has " ++ show rt ++ " " ++ showEither value
+
+instance Show RolePlayer where
+    show (RolePlayer roletype player) = roletype `with` ": " ++ show player
 
 instance Show Value where
     show (ValueString text) = show text
@@ -114,14 +112,11 @@ instance IsVarOrName Var where
 instance IsVarOrName Name where
     toVarOrName = TypeName
 
-instance IsCasting Casting where
-    toCasting = id
+instance IsRolePlayer RolePlayer where
+    toRolePlayer = id
 
-instance IsCasting VarOrName where
-    toCasting = Casting Nothing
-
-instance IsCasting Var where
-    toCasting = toCasting . toVarOrName
+instance IsRolePlayer Var where
+    toRolePlayer = rp
 
 instance IsResource Var where
     toResource = Right
@@ -151,3 +146,6 @@ instance FromJSON Var where
 
 instance FromJSONKey Var where
   fromJSONKey = FromJSONKeyText var
+
+showEither :: (Show a, Show b) => Either a b -> String
+showEither = either show show
