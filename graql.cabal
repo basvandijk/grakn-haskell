@@ -1,5 +1,5 @@
 name:                 graql
-version:              0.1.0.0
+version:              0.1.1
 synopsis:             Execute Graql queries on a Grakn graph
 description:          A library for building and executing Graql queries on a
                       Grakn knowledge graph.
