@@ -1,10 +1,20 @@
 module Graql.Util
-    ( with
+    ( Convert (convert)
+    , with
     , commas
     , spaces
     ) where
 
 import           Data.List        (intercalate)
+
+
+class Convert a b where
+    convert :: a -> b
+
+
+instance Convert a a where
+    convert = id
+
 
 with :: Show a => Maybe a -> String -> String
 (Just val) `with` suffix = show val ++ suffix

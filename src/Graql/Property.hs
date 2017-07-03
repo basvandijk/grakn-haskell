@@ -1,22 +1,17 @@
 module Graql.Property
     ( Property (..)
+    , RolePlayer
     , Var
     , Name
     , VarOrName
     , Value (..)
-    , IsVarOrName
-    , IsRolePlayer
-    , IsResource
     , var
     , name
     , (.:)
     , rp
-    , toVarOrName
-    , toRolePlayer
-    , toResource
     ) where
 
-import           Graql.Util
+import           Graql.Util       (Convert(convert), with, commas)
 import           Data.Text        (Text, unpack)
 import           Data.Scientific  (Scientific)
 import           Text.Regex.Posix ((=~))
@@ -47,18 +42,6 @@ data Value = ValueString Text | ValueNumber Scientific | ValueBool Bool
 -- |A casting, relating a role type and role player
 data RolePlayer = RolePlayer (Maybe VarOrName) Var
 
--- |Something that can be converted into a variable or a type name
-class IsVarOrName a where
-    toVarOrName :: a -> VarOrName
-
--- |Something that can be converted into a casting
-class IsRolePlayer a where
-    toRolePlayer :: a -> RolePlayer
-
--- |Something that can be converted into a resource value or variable
-class IsResource a where
-    toResource :: a -> Either Value Var
-
 -- |Create a variable
 var :: Text -> Var
 var = Var
@@ -68,8 +51,8 @@ name :: Text -> Name
 name = Name
 
 -- |A casting in a relation between a role type and a role player
-(.:) :: IsVarOrName a => a -> Var -> RolePlayer
-rt .: player = RolePlayer (Just $ toVarOrName rt) player
+(.:) :: Convert a VarOrName => a -> Var -> RolePlayer
+rt .: player = RolePlayer (Just $ convert rt) player
 
 -- |A casting in a relation without a role type
 rp :: Var -> RolePlayer
@@ -106,29 +89,26 @@ instance Show VarOrName where
     show (VarName  v) = show v
     show (TypeName t) = show t
 
-instance IsVarOrName Var where
-    toVarOrName = VarName
+instance Convert Var VarOrName where
+    convert = VarName
 
-instance IsVarOrName Name where
-    toVarOrName = TypeName
+instance Convert Name VarOrName where
+    convert = TypeName
 
-instance IsRolePlayer RolePlayer where
-    toRolePlayer = id
+instance Convert Var RolePlayer where
+    convert = rp
 
-instance IsRolePlayer Var where
-    toRolePlayer = rp
+instance Convert Var (Either Value Var) where
+    convert = Right
 
-instance IsResource Var where
-    toResource = Right
+instance Convert Text (Either Value Var) where
+    convert = Left . ValueString
 
-instance IsResource Text where
-    toResource = Left . ValueString
+instance Convert Scientific (Either Value Var) where
+    convert = Left . ValueNumber
 
-instance IsResource Scientific where
-    toResource = Left . ValueNumber
-
-instance IsResource Bool where
-    toResource = Left . ValueBool
+instance Convert Bool (Either Value Var) where
+    convert = Left . ValueBool
 
 instance FromJSON Value where
   parseJSON (Aeson.String s) = return $ ValueString s

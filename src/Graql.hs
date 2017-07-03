@@ -23,16 +23,17 @@ module Graql
 import           Graql.Property
 import           Graql.Pattern
 import           Graql.Query
+import           Graql.Util       (Convert)
 import           Data.Text        (Text)
 
 -- |Specify a property has a particular type
-(-:) :: (IsPattern p, IsVarOrName a) => p -> a -> Pattern
+(-:) :: (Convert p Pattern, Convert a VarOrName) => p -> a -> Pattern
 (-:) = isa
 
 -- |Shorthand to define a relation
-rel :: IsRolePlayer a => [a] -> Pattern
+rel :: Convert a RolePlayer => [a] -> Pattern
 rel = (var_ <:)
 
 -- |Specify a property has a resource
-hasText :: (IsPattern p) => p -> Name -> Text -> Pattern
+hasText :: (Convert p Pattern) => p -> Name -> Text -> Pattern
 hasText = has

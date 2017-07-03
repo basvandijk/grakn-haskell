@@ -17,8 +17,8 @@ data MatchQuery = Match [Pattern]
                 | Distinct MatchQuery
 
 -- |Create a match query by providing a list of patterns
-match :: IsPattern a => [a] -> MatchQuery
-match = Match . map toPattern
+match :: Convert a Pattern => [a] -> MatchQuery
+match = Match . map convert
 
 -- |Select variables from a match query, intended to be used infix
 select :: [Var] -> MatchQuery -> MatchQuery
