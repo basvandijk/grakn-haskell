@@ -1,12 +1,12 @@
-module Main where
+module GraqlSpec where
 
 import Data.Function ((&))
 import Test.Hspec
 import Graql
 import qualified Example
 
-main :: IO ()
-main = hspec $ do
+spec :: Spec
+spec = do
 
     it "a simple query string representation" $
         match [x `isa` person] ~= "match $x isa person;"
@@ -49,6 +49,7 @@ main = hspec $ do
     it "example query output" $
         Example.query
             ~= "match $x isa person; (husband: $x, wife: $y) isa marriage; select $y;"
+
 
 
 x :: Var
