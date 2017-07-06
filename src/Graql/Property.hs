@@ -31,13 +31,13 @@ data Property = Isa VarOrName
 data Var = Var Text deriving (Eq, Ord)
 
 -- |A name of something in the graph
-data Name = Name Text
+data Name = Name Text deriving Eq
 
 -- |Something that may be a variable name or a type name
 data VarOrName = VarName Var | TypeName Name
 
 -- |A value of a resource
-data Value = ValueString Text | ValueNumber Scientific | ValueBool Bool
+data Value = ValueString Text | ValueNumber Scientific | ValueBool Bool deriving Eq
 
 -- |A casting, relating a role type and role player
 data RolePlayer = RolePlayer (Maybe VarOrName) Var

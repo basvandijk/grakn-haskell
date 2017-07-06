@@ -1,5 +1,6 @@
 module Graql.Query
-    ( MatchQuery
+    ( IsQuery (queryString)
+    , MatchQuery
     , match
     , select
     , limit
@@ -9,6 +10,9 @@ module Graql.Query
 import           Graql.Util
 import           Graql.Pattern
 import           Graql.Property
+
+class IsQuery q where
+    queryString :: q -> String
 
 -- |A Graql 'match' query that finds a pattern in the graph
 data MatchQuery = Match [Pattern]
@@ -39,3 +43,8 @@ instance Show MatchQuery where
     show (Limit mq lim  ) = show mq ++ " limit " ++ show lim ++ ";"
     show (Distinct mq   ) = show mq ++ " distinct;"
 
+instance IsQuery MatchQuery where
+    queryString = show
+
+instance IsQuery String where
+    queryString = id

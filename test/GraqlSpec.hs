@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module GraqlSpec where
 
 import Data.Function ((&))

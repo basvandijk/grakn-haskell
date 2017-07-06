@@ -1,8 +1,12 @@
 module Graql
     ( MatchQuery
+    , Graph (Graph, keyspace, uri)
+    , GraknError
+    , Result (MatchResult, AskResult, CountResult)
     , Var
     , Name
     , Value (..)
+    , execute
     , match
     , select
     , distinct
@@ -19,12 +23,15 @@ module Graql
     , hasText
     , var_
     ) where
-    
-import           Graql.Property
+
+import           Data.Text      (Text)
+import           Graql.Client   (GraknError, Graph (Graph, keyspace, uri),
+                                 Result (MatchResult, AskResult, CountResult),
+                                 execute)
 import           Graql.Pattern
+import           Graql.Property
 import           Graql.Query
-import           Graql.Util       (Convert)
-import           Data.Text        (Text)
+import           Graql.Util     (Convert)
 
 -- |Specify a property has a particular type
 (-:) :: (Convert p Pattern, Convert a VarOrName) => p -> a -> Pattern

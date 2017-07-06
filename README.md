@@ -3,10 +3,11 @@ A simple library for building and executing Graql queries.
 Import the modules:
 
 ```haskell
+{-# LANGUAGE OverloadedStrings #-}
+
 module Example where
 
 import Graql
-import Graql.Shell
 
 import Data.Function ((&))
 ```
@@ -52,7 +53,9 @@ otherQuery = match
 To execute and print the results of our query:
 
 ```haskell
+graph = Graph "http://localhost:4567" "my-keyspace"
+
 main = do
-    result <- runMatch query
+    result <- execute graph query
     print result
 ```
