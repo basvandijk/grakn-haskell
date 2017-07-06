@@ -2,21 +2,26 @@ module Steps.GraqlQuerySpec where
 
 import Test.Hspec
 import Graql
-import Control.Monad (when)
-import System.IO (hGetContents)
-import System.Process (StdStream (CreatePipe), readProcess, readProcessWithExitCode, proc, std_out)
+import System.Process (createProcess, readProcess, waitForProcess, proc)
 import Data.String.Utils (rstrip)
 
 aGraphContainingTypesAndInstances :: IO Graph
 aGraphContainingTypesAndInstances = do
-    -- Given a graph
-    keyspace <- rstrip <$> readProcess "grakn-spec/env.sh" ["keyspace"] ""
-    let graph = Graph "http://localhost:4567" keyspace
-    -- And ontology `person sub entity, has name; name sub resource, datatype string;`
-    readProcess "grakn-spec/env.sh" ["insert", "person sub entity, has name; name sub resource, datatype string;"] ""
-    -- And data `$alice isa person, has name "Alice";`
-    readProcess "grakn-spec/env.sh" ["insert", "$alice isa person, has name \"Alice\";"] ""
+    graph <- givenAGraph
+    insert "person sub entity, has name; name sub resource, datatype string;"
+    insert "$alice isa person, has name \"Alice\";"
     return graph
+
+givenAGraph :: IO Graph
+givenAGraph = do
+    ks <- rstrip <$> readProcess "grakn-spec/env.sh" ["keyspace"] ""
+    return $ Graph "http://localhost:4567" ks
+
+insert :: String -> IO ()
+insert patterns = do
+    (_, _, _, p) <- createProcess (proc "grakn-spec/env.sh" ["insert", patterns])
+    _ <- waitForProcess p
+    return ()
 
 spec :: Spec
 spec = before aGraphContainingTypesAndInstances $
@@ -77,11 +82,13 @@ spec = before aGraphContainingTypesAndInstances $
 --        When the user issues `match $x has name "Precy"; delete $x;`
 --        Then the response is empty
 
+is :: (Show t, Show a, Eq a) => Either t a -> a -> Expectation
 response `is` expected =
     case response of
         Right answer -> answer `shouldBe` expected
         x            -> expectationFailure (show x)
 
+hasResults :: Show t => Either t Result -> Int -> Expectation
 response `hasResults` n =
     case response of
         Right (MatchResult answers) -> length answers `shouldBe` n

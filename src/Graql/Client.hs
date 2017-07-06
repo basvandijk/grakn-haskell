@@ -2,6 +2,7 @@
 
 module Graql.Client
   ( Graph(Graph, keyspace, uri)
+  , Concept (Concept, cid, cname, ctype, value)
   , GraknError
   , Result (MatchResult, AskResult, CountResult)
   , execute
@@ -40,12 +41,12 @@ data Concept = Concept { cid :: Text, cname :: Maybe Name, ctype :: Maybe Name, 
   deriving (Show, Eq)
 
 execute :: IsQuery q => Graph -> q -> IO (Either ServantError Result)
-execute (Graph uri keyspace) query = do
+execute (Graph _ ks) query = do
     manager <- newManager defaultManagerSettings
-    runExceptT $ graqlGet' (queryString query) keyspace manager
+    runExceptT $ graqlGet' (queryString query) ks manager
 
 graqlGet' :: String -> String -> Manager -> ClientM Result
-graqlGet' query keyspace manager = graqlGet (Just query) (Just keyspace) (Just False) (Just False) manager (BaseUrl Http "localhost" 4567 "")
+graqlGet' query ks manager = graqlGet (Just query) (Just ks) (Just False) (Just False) manager (BaseUrl Http "localhost" 4567 "")
 
 instance FromJSON Concept where
   parseJSON (Aeson.Object obj) =

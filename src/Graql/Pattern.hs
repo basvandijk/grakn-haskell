@@ -33,7 +33,7 @@ showProps :: Show a => [a] -> String
 showProps = spaces . reverse
 
 addPropToPattern :: Pattern -> Property -> Pattern
-addPropToPattern (Pattern name props) prop = Pattern name (prop : props)
+addPropToPattern (Pattern n props) prop = Pattern n (prop : props)
 
 addProperty :: Convert a Pattern => a -> Property -> Pattern
 addProperty = addPropToPattern . convert

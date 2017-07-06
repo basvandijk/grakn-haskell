@@ -1,9 +1,7 @@
 module Main where
 
 import Test.Hspec.Runner
-import Test.Hspec.Formatters
 import System.Exit (ExitCode(ExitSuccess), exitFailure)
-import Control.Monad (when)
 import System.Process (createProcess, proc, waitForProcess)
 import qualified Spec
 
@@ -16,7 +14,7 @@ envStart = do
 envStop :: IO ()
 envStop = do
     (_, _, _, p) <- createProcess (proc "grakn-spec/env.sh" ["stop"])
-    waitForProcess p
+    _ <- waitForProcess p
     return ()
 
 main :: IO ()

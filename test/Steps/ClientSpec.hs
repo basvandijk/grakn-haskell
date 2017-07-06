@@ -28,5 +28,5 @@ spec = describe "As a Grakn Developer I should be able to connect to a running G
 --        Then create a new graph
 
 
-
+aBrokenConnectionToTheDatabase :: Graph
 aBrokenConnectionToTheDatabase = Graph "http://1.2.3.4:5678" "akeyspace"
