@@ -1,16 +1,18 @@
 module Graql.Pattern
-    ( Pattern
-    , var_
-    , isa
-    , (<:)
-    , has
-    ) where
+  ( Pattern
+  , var_
+  , isa
+  , (<:)
+  , has
+  ) where
 
-import           Graql.Util     (Convert(convert), with, spaces)
 import           Graql.Property
+import           Graql.Util     (Convert (convert), spaces, with)
 
 -- |A pattern to find in the graph
-data Pattern = Pattern (Maybe VarOrName) [Property]
+data Pattern =
+  Pattern (Maybe VarOrName)
+          [Property]
 
 -- |Create an anonymous variable
 var_ :: Pattern
@@ -25,9 +27,13 @@ patt `isa` x = addProperty patt (Isa $ convert x)
 patt <: cs = addProperty patt (Rel $ map convert cs)
 
 -- |Specify a property has a resource
-has :: (Convert p Pattern, Convert a (Either Value Var)) => p -> Name -> a -> Pattern
+has ::
+     (Convert p Pattern, Convert a (Either Value Var))
+  => p
+  -> Name
+  -> a
+  -> Pattern
 has patt rt v = addProperty patt (Has rt $ convert v)
-
 
 showProps :: Show a => [a] -> String
 showProps = spaces . reverse
@@ -38,16 +44,15 @@ addPropToPattern (Pattern n props) prop = Pattern n (prop : props)
 addProperty :: Convert a Pattern => a -> Property -> Pattern
 addProperty = addPropToPattern . convert
 
-
 instance Show Pattern where
-    show (Pattern v []   ) = v `with` "" ++ ";"
-    show (Pattern v props) = v `with` " " ++ showProps props ++ ";"
+  show (Pattern v [])    = v `with` "" ++ ";"
+  show (Pattern v props) = v `with` " " ++ showProps props ++ ";"
 
 instance Convert Var Pattern where
-    convert = convert . (convert :: Var -> VarOrName)
+  convert = convert . (convert :: Var -> VarOrName)
 
 instance Convert Name Pattern where
-    convert = convert . (convert :: Name -> VarOrName)
+  convert = convert . (convert :: Name -> VarOrName)
 
 instance Convert VarOrName Pattern where
-    convert v = Pattern (Just v) []
+  convert v = Pattern (Just v) []

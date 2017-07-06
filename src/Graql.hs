@@ -1,32 +1,32 @@
 module Graql
-    ( MatchQuery
-    , Graph (Graph, keyspace, uri)
-    , GraknError
-    , Result (MatchResult, AskResult, CountResult)
-    , Var
-    , Name
-    , Value (..)
-    , execute
-    , match
-    , select
-    , distinct
-    , limit
-    , var
-    , name
-    , isa
-    , (-:)
-    , (.:)
-    , rp
-    , (<:)
-    , rel
-    , has
-    , hasText
-    , var_
-    ) where
+  ( MatchQuery
+  , Graph(Graph, keyspace, uri)
+  , GraknError
+  , Result(MatchResult, AskResult, CountResult)
+  , Var
+  , Name
+  , Value(..)
+  , execute
+  , match
+  , select
+  , distinct
+  , limit
+  , var
+  , name
+  , isa
+  , (-:)
+  , (.:)
+  , rp
+  , (<:)
+  , rel
+  , has
+  , hasText
+  , var_
+  ) where
 
 import           Data.Text      (Text)
 import           Graql.Client   (GraknError, Graph (Graph, keyspace, uri),
-                                 Result (MatchResult, AskResult, CountResult),
+                                 Result (AskResult, CountResult, MatchResult),
                                  execute)
 import           Graql.Pattern
 import           Graql.Property

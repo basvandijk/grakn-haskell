@@ -1,24 +1,27 @@
 module Graql.Query
-    ( IsQuery (queryString)
-    , MatchQuery
-    , match
-    , select
-    , limit
-    , distinct
-    ) where
+  ( IsQuery(queryString)
+  , MatchQuery
+  , match
+  , select
+  , limit
+  , distinct
+  ) where
 
-import           Graql.Util
 import           Graql.Pattern
 import           Graql.Property
+import           Graql.Util
 
 class IsQuery q where
-    queryString :: q -> String
+  queryString :: q -> String
 
 -- |A Graql 'match' query that finds a pattern in the graph
-data MatchQuery = Match [Pattern]
-                | Select MatchQuery [Var]
-                | Limit MatchQuery Integer
-                | Distinct MatchQuery
+data MatchQuery
+  = Match [Pattern]
+  | Select MatchQuery
+           [Var]
+  | Limit MatchQuery
+          Integer
+  | Distinct MatchQuery
 
 -- |Create a match query by providing a list of patterns
 match :: Convert a Pattern => [a] -> MatchQuery
@@ -36,15 +39,14 @@ limit = flip Limit
 distinct :: MatchQuery -> MatchQuery
 distinct = Distinct
 
-
 instance Show MatchQuery where
-    show (Match patts   ) = "match " ++ spaces patts
-    show (Select mq vars) = show mq ++ " select " ++ commas vars ++ ";"
-    show (Limit mq lim  ) = show mq ++ " limit " ++ show lim ++ ";"
-    show (Distinct mq   ) = show mq ++ " distinct;"
+  show (Match patts)    = "match " ++ spaces patts
+  show (Select mq vars) = show mq ++ " select " ++ commas vars ++ ";"
+  show (Limit mq lim)   = show mq ++ " limit " ++ show lim ++ ";"
+  show (Distinct mq)    = show mq ++ " distinct;"
 
 instance IsQuery MatchQuery where
-    queryString = show
+  queryString = show
 
 instance IsQuery String where
-    queryString = id
+  queryString = id

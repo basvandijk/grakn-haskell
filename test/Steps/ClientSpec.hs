@@ -5,15 +5,18 @@ import           Graql
 import           Test.Hspec
 
 spec :: Spec
-spec = describe "As a Grakn Developer I should be able to connect to a running Grakn Instance and use that instance to issue queries." $
-
-    it "Issuing a query with a broken connection" $ do
+spec =
+  describe
+    "As a Grakn Developer I should be able to connect to a running Grakn Instance and use that instance to issue queries." $
+  it "Issuing a query with a broken connection" $
         -- Given a broken connection to the database
-        let graph = aBrokenConnectionToTheDatabase
+   do
+    let graph = aBrokenConnectionToTheDatabase
         -- When the user issues `match $x sub entity;`
-        result <- execute graph "match $x sub entitty"
+    result <- execute graph "match $x sub entitty"
         -- Then return an error
-        result `shouldSatisfy` isLeft
+    result `shouldSatisfy` isLeft
+
 --
 --    @skip
 --    Scenario: Creating a connection to a graph
@@ -26,7 +29,5 @@ spec = describe "As a Grakn Developer I should be able to connect to a running G
 --        Given a graph which does not exist
 --        When the user connects to the graph
 --        Then create a new graph
-
-
 aBrokenConnectionToTheDatabase :: Graph
 aBrokenConnectionToTheDatabase = Graph "http://1.2.3.4:5678" "akeyspace"

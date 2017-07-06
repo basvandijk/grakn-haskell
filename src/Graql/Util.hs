@@ -1,24 +1,21 @@
 module Graql.Util
-    ( Convert (convert)
-    , with
-    , commas
-    , spaces
-    ) where
+  ( Convert(convert)
+  , with
+  , commas
+  , spaces
+  ) where
 
-import           Data.List        (intercalate)
-
+import           Data.List (intercalate)
 
 class Convert a b where
-    convert :: a -> b
-
+  convert :: a -> b
 
 instance Convert a a where
-    convert = id
-
+  convert = id
 
 with :: Show a => Maybe a -> String -> String
 (Just val) `with` suffix = show val ++ suffix
-Nothing    `with` _      = ""
+Nothing `with` _ = ""
 
 commas :: Show a => [a] -> String
 commas = interList ", "
