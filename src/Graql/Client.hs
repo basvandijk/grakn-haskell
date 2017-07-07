@@ -74,14 +74,7 @@ graknAPI = Proxy
 
 graqlGet :: Graph -> String -> Manager -> ClientM Result
 graqlGet (Graph u ks) query manager =
-  client
-    graknAPI
-    (Just query)
-    (Just ks)
-    (Just False)
-    (Just False)
-    manager
-    u
+  client graknAPI (Just query) (Just ks) (Just False) (Just False) manager u
 
 instance FromJSON Concept where
   parseJSON (Aeson.Object obj) =

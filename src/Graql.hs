@@ -29,7 +29,7 @@ module Graql
 import           Data.Text      (Text)
 import           Graql.Client   (GraknError, Graph (Graph, keyspace, url),
                                  Result (AskResult, CountResult, MatchResult),
-                                 defaultUrl, defaultKeyspace, execute)
+                                 defaultKeyspace, defaultUrl, execute)
 import           Graql.Pattern
 import           Graql.Property
 import           Graql.Query
