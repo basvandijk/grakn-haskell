@@ -15,7 +15,7 @@ aGraphContainingTypesAndInstances = do
 givenAGraph :: IO Graph
 givenAGraph = do
     ks <- rstrip <$> readProcess "grakn-spec/env.sh" ["keyspace"] ""
-    return $ Graph "http://localhost:4567" ks
+    return $ Graph defaultUrl ks
 
 insert :: String -> IO ()
 insert patterns = do

@@ -3,6 +3,8 @@ module Steps.ClientSpec where
 import           Data.Either (isLeft)
 import           Graql
 import           Test.Hspec
+import           Servant.Client
+import           Servant.API
 
 spec :: Spec
 spec =
@@ -30,4 +32,4 @@ spec =
 --        When the user connects to the graph
 --        Then create a new graph
 aBrokenConnectionToTheDatabase :: Graph
-aBrokenConnectionToTheDatabase = Graph "http://1.2.3.4:5678" "akeyspace"
+aBrokenConnectionToTheDatabase = Graph (BaseUrl Http "1.2.3.4" 5678 "") "akeyspace"

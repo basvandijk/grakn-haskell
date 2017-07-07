@@ -66,7 +66,7 @@ To execute and print the results of our query:
 
 ```haskell
 graph :: Graph
-graph = Graph "http://localhost:4567" "my-keyspace"
+graph = Graph defaultUrl "my-keyspace"
 
 main :: IO ()
 main = do

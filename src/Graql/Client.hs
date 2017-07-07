@@ -1,10 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Graql.Client
-  ( Graph(Graph, keyspace, uri)
+  ( Graph(Graph, keyspace, url)
   , Concept(Concept, cid, cname, ctype, value)
   , GraknError
   , Result(MatchResult, AskResult, CountResult)
+  , defaultUrl
+  , defaultKeyspace
   , execute
   ) where
 
@@ -27,7 +29,7 @@ import           Servant.API.ContentTypes (eitherDecodeLenient)
 import           Servant.Client
 
 data Graph = Graph
-  { uri      :: String
+  { url      :: BaseUrl
   , keyspace :: String
   }
 
@@ -50,20 +52,36 @@ data Concept = Concept
   , value :: Maybe Value
   } deriving (Show, Eq)
 
-execute :: IsQuery q => Graph -> q -> IO (Either ServantError Result)
-execute (Graph _ ks) query = do
-  manager <- newManager defaultManagerSettings
-  runExceptT $ graqlGet' (queryString query) ks manager
+-- |The default Grakn URL, accessing localhost
+defaultUrl :: BaseUrl
+defaultUrl = BaseUrl Http "localhost" 4567 ""
 
-graqlGet' :: String -> String -> Manager -> ClientM Result
-graqlGet' query ks manager =
-  graqlGet
+-- |The default Grakn keyspace
+defaultKeyspace :: String
+defaultKeyspace = "grakn"
+
+execute :: IsQuery q => Graph -> q -> IO (Either ServantError Result)
+execute graph query = do
+  manager <- newManager defaultManagerSettings
+  runExceptT $ graqlGet graph (queryString query) manager
+
+-- |A type describing the REST API we use to execute queries
+type GraknAPI
+   = "graph" :> "graql" :> QueryParam "query" String :> QueryParam "keyspace" String :> QueryParam "infer" Bool :> QueryParam "materialise" Bool :> Get '[ GraqlJSON] Result
+
+graknAPI :: Proxy GraknAPI
+graknAPI = Proxy
+
+graqlGet :: Graph -> String -> Manager -> ClientM Result
+graqlGet (Graph u ks) query manager =
+  client
+    graknAPI
     (Just query)
     (Just ks)
     (Just False)
     (Just False)
     manager
-    (BaseUrl Http "localhost" 4567 "")
+    u
 
 instance FromJSON Concept where
   parseJSON (Aeson.Object obj) =
@@ -79,22 +97,6 @@ instance FromJSON Result where
       , CountResult <$> (obj .: "response")
       ]
   parseJSON _ = empty
-
-type GraknAPI
-   = "graph" :> "graql" :> QueryParam "query" String :> QueryParam "keyspace" String :> QueryParam "infer" Bool :> QueryParam "materialise" Bool :> Get '[ GraqlJSON] Result
-
-graknAPI :: Proxy GraknAPI
-graknAPI = Proxy
-
-graqlGet ::
-     Maybe String
-  -> Maybe String
-  -> Maybe Bool
-  -> Maybe Bool
-  -> Manager
-  -> BaseUrl
-  -> ClientM Result
-graqlGet = client graknAPI
 
 data GraqlJSON
 
