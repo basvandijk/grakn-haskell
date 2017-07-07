@@ -1,4 +1,4 @@
-module Graql.ClientSpec where
+module Graql.ClientSpec (spec) where
 
 import           Graql.Client
 import qualified Servant.Client  as S

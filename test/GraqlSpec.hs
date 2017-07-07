@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module GraqlSpec where
+module GraqlSpec (spec) where
 
 import           Data.Function ((&))
 import qualified Example

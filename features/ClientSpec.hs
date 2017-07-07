@@ -1,4 +1,4 @@
-module ClientSpec where
+module ClientSpec (spec) where
 
 import           Data.Either    (isLeft)
 import           Graql

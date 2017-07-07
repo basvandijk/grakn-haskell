@@ -30,12 +30,12 @@ data Property
         (Either Value Var)
 
 -- |A variable name wildcard that will represent a concept in the results
-data Var =
+newtype Var =
   Var Text
   deriving (Eq, Ord)
 
 -- |A name of something in the graph
-data Name =
+newtype Name =
   Name Text
   deriving (Eq)
 

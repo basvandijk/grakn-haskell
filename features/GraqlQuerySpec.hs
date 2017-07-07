@@ -1,4 +1,4 @@
-module GraqlQuerySpec where
+module GraqlQuerySpec (spec) where
 
 import           Env
 import           Graql
