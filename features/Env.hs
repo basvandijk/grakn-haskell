@@ -10,15 +10,11 @@ env :: [String] -> CreateProcess
 env = proc "features/grakn-spec/env.sh"
 
 envStart :: IO Bool
-envStart = do
-  (_, _, _, p) <- createProcess (env ["start"])
-  code <- waitForProcess p
-  return $ code == ExitSuccess
+envStart = envSuccess ["start", "0.15.0"]
 
 envStop :: IO ()
 envStop = do
-  (_, _, _, p) <- createProcess (env ["stop"])
-  _ <- waitForProcess p
+  _ <- envSuccess ["stop"]
   return ()
 
 envKeyspace :: IO String
@@ -26,6 +22,17 @@ envKeyspace = rstrip <$> readCreateProcess (env ["keyspace"]) ""
 
 envInsert :: String -> IO ()
 envInsert patterns = do
-  (_, _, _, p) <- createProcess (env ["insert", patterns])
-  _ <- waitForProcess p
+  _ <- envSuccess ["insert", patterns]
   return ()
+
+envCheckType :: String -> IO Bool
+envCheckType label = envSuccess ["check", "type", label]
+
+envCheckInstance :: String -> String -> IO Bool
+envCheckInstance res value = envSuccess ["check", "instance", res, value]
+
+envSuccess :: [String] -> IO Bool
+envSuccess args = do
+    (_, _, _, p) <- createProcess $ env args
+    code <- waitForProcess p
+    return $ code == ExitSuccess
