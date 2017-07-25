@@ -1,10 +1,10 @@
 module GraqlQuerySpec (spec) where
 
+import           Control.Exception (Exception, displayException)
+import           Data.Either       (isLeft)
 import           Env
 import           Grakn
 import           Test.Hspec
-import           Data.Either (isLeft)
-import           Control.Exception (Exception, displayException)
 
 aGraphContainingTypesAndInstances :: IO Graph
 aGraphContainingTypesAndInstances = do

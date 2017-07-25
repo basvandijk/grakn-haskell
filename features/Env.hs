@@ -3,8 +3,7 @@ module Env where
 import           Data.String.Utils (rstrip)
 import           System.Exit       (ExitCode (ExitSuccess))
 import           System.Process    (CreateProcess, createProcess, proc,
-                                    readCreateProcess,
-                                    waitForProcess)
+                                    readCreateProcess, waitForProcess)
 
 env :: [String] -> CreateProcess
 env = proc "features/grakn-spec/env.sh"

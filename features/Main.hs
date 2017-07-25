@@ -2,7 +2,7 @@ module Main where
 
 import           Env
 import qualified Spec
-import           System.Exit       (exitSuccess, exitFailure)
+import           System.Exit       (exitFailure, exitSuccess)
 import           Test.Hspec.Runner (Summary (Summary), hspecResult)
 
 main :: IO ()
