@@ -1,4 +1,29 @@
-language: haskell
+sudo: false
+
+# Do not choose a language; we provide our own build tools.
+language: generic
+
+# Ensure necessary system libraries are present
+addons:
+  apt:
+    packages:
+      - libgmp-dev
+
+before_install:
+  # Download and unpack the stack executable
+  - mkdir -p ~/.local/bin
+  - export PATH=$HOME/.local/bin:$PATH
+  - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+install:
+  - stack --no-terminal --install-ghc test --only-dependencies
+
+script:
+  - stack --no-terminal test --haddock --no-haddock-deps
+
+cache:
+  directories:
+  - $HOME/.stack
 
 deploy:
   provider: hackage
@@ -7,7 +32,3 @@ deploy:
     secure: TrKledCrZEXit6dEWPlOYyFAlV9mleScPZEgVRLD6baGcg5RZguMi4dNXCelWXDuJoDZw/ks1UgZFa+EZjLv3IyYxQJTM7JYXcpuPHR+SjSKCa6JrppqvuXrFgFwT3k0KPD9wEfKfWK1GEHTjWf8sFHBnNq32Q5ysPS2FZGp+2qP6F7SKJiK2xsyoEsj8lDbQbOqCR628ejufgJLZhAnPWluEsC2lImSzxKaniysLh0c0PiH4SvNjUkzfuFVISC5S/ovdIy9KLnvu3Th7tS8vjwXHXgN8h9zcCXle9amVXmNoYK4EFsAegRRpqUor021HZntRkkw5XI2MkMgDTFBYz9YkWnRB7jcaKACUkLEs0gPopBzC/hF/UoIeBqFmAngcFEduYuY850mbpEfjXgJXSWR7rUHC5pmSphkI6eupgbwztCxOSqpJ8BmGzl10t0VvrXW5gGQKEWyUhNJtfsJKfTdXyZk2PfqNTpy6pVdJKEP82ZtovwVnCpI1GOMVL8Ly7cMdCiS56BRpqnaI++vckMJYp5Z18ZMV0F2Sjjdh1cLe6QklVNS0GkyTmxYlyujEJI9G0ypUQqST3a7EZUHwqx+Pr2rbyWqAXBh++tPzX879HDsU/qfvt5CTh+Hfq7p95eIMxaIsJs/KqWbK4YuSaS8ntniff2r3e43yTWeft0=
   on:
     repo: graknlabs/grakn-haskell
-
-cache:
-  directories:
-  - $HOME/.stack
