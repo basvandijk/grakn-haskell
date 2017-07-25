@@ -24,6 +24,7 @@ library
                       , http-client
                       , mtl
                       , http-media
+                      , semigroups
   hs-source-dirs:       src
   exposed-modules:      Grakn
   other-modules:        Grakn.Util
@@ -56,6 +57,7 @@ test-suite test
                       , http-client
                       , mtl
                       , http-media
+                      , semigroups
                       , hspec
                       , QuickCheck >= 2.8
                       , markdown-unlit
@@ -86,6 +88,7 @@ test-suite accept
                       , http-client
                       , mtl
                       , http-media
+                      , semigroups
                       , hspec
                       , markdown-unlit
                       , MissingH
