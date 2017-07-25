@@ -1,4 +1,4 @@
-module Graql.Query
+module Grakn.Query
   ( IsQuery(queryString)
   , MatchQuery
   , match
@@ -7,9 +7,9 @@ module Graql.Query
   , distinct
   ) where
 
-import           Graql.Pattern
-import           Graql.Property
-import           Graql.Util
+import           Grakn.Pattern
+import           Grakn.Property
+import           Grakn.Util
 
 class IsQuery q where
   queryString :: q -> String

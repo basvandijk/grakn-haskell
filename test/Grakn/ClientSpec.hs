@@ -1,6 +1,6 @@
-module Graql.ClientSpec (spec) where
+module Grakn.ClientSpec (spec) where
 
-import           Graql.Client
+import           Grakn.Client
 import qualified Servant.Client  as S
 import           Test.Hspec
 import           Test.QuickCheck

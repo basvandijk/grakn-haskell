@@ -1,7 +1,7 @@
 module ClientSpec (spec) where
 
 import           Data.Either    (isLeft)
-import           Graql
+import           Grakn
 import           Servant.Client
 import           Test.Hspec
 

@@ -1,4 +1,4 @@
-module Graql.Property
+module Grakn.Property
   ( Property(..)
   , RolePlayer
   , Var
@@ -18,7 +18,7 @@ import           Data.Aeson          (FromJSON, FromJSONKey,
 import qualified Data.Aeson          as Aeson
 import           Data.Scientific     (Scientific)
 import           Data.Text           (Text, unpack)
-import           Graql.Util          (Convert (convert), commas, with)
+import           Grakn.Util          (Convert (convert), commas, with)
 import           Text.Regex.Posix    ((=~))
 
 -- |A property of a concept

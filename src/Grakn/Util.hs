@@ -1,4 +1,4 @@
-module Graql.Util
+module Grakn.Util
   ( Convert(convert)
   , with
   , commas

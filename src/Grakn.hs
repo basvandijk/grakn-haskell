@@ -1,4 +1,4 @@
-module Graql
+module Grakn
   ( MatchQuery
   , Graph(Graph, keyspace, url)
   , GraknError
@@ -28,12 +28,12 @@ module Graql
   ) where
 
 import           Data.Text      (Text)
-import           Graql.Client   (GraknError, Graph (Graph, keyspace, url), Result (AskResult, CountResult, DeleteResult, InsertResult, MatchResult),
+import           Grakn.Client   (GraknError, Graph (Graph, keyspace, url), Result (AskResult, CountResult, DeleteResult, InsertResult, MatchResult),
                                  defaultKeyspace, defaultUrl, execute)
-import           Graql.Pattern
-import           Graql.Property
-import           Graql.Query
-import           Graql.Util     (Convert)
+import           Grakn.Pattern
+import           Grakn.Property
+import           Grakn.Query
+import           Grakn.Util     (Convert)
 
 -- |Specify a property has a particular type
 (-:) :: (Convert p Pattern, Convert a VarOrName) => p -> a -> Pattern

@@ -1,4 +1,4 @@
-module Graql.Pattern
+module Grakn.Pattern
   ( Pattern
   , var_
   , isa
@@ -6,8 +6,8 @@ module Graql.Pattern
   , has
   ) where
 
-import           Graql.Property
-import           Graql.Util     (Convert (convert), spaces, with)
+import           Grakn.Property
+import           Grakn.Util     (Convert (convert), spaces, with)
 
 -- |A pattern to find in the graph
 data Pattern =

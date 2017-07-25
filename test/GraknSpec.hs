@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module GraqlSpec (spec) where
+module GraknSpec (spec) where
 
 import           Data.Function ((&))
 import qualified Example
-import           Graql
+import           Grakn
 import           Test.Hspec
 
 spec :: Spec

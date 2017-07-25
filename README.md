@@ -7,7 +7,7 @@ Import the modules:
 
 module Example where
 
-import Graql
+import Grakn
 
 import Data.Function ((&))
 ```

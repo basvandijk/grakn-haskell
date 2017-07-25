@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Graql.Client
+module Grakn.Client
   ( Graph(Graph, keyspace, url)
   , Concept(Concept, cid, cname, ctype, value)
   , GraknError
@@ -20,8 +20,8 @@ import           Data.List.NonEmpty       (NonEmpty ((:|)))
 import           Data.Map                 (Map)
 import           Data.Proxy               (Proxy (Proxy))
 import           Data.Text                (Text)
-import           Graql.Property           (Name, Value, Var)
-import           Graql.Query              (IsQuery (queryString))
+import           Grakn.Property           (Name, Value, Var)
+import           Grakn.Query              (IsQuery (queryString))
 import           Network.HTTP.Client      (defaultManagerSettings, newManager)
 import           Network.HTTP.Media       ((//))
 import           Servant.API

@@ -1,13 +1,11 @@
-name:                 graql
+name:                 grakn
 version:              0.1.1
-synopsis:             Execute Graql queries on a Grakn graph
-description:          A library for building and executing Graql queries on a
-                      Grakn knowledge graph.
+synopsis:             A Haskell client for <http://grakn.ai Grakn>
 license:              Apache-2.0
 license-file:         LICENSE
-homepage:             https://github.com/graknlabs/graql-haskell
-author:               Felix Chapman
-maintainer:           felix@grakn.ai
+homepage:             https://github.com/graknlabs/grakn-haskell
+author:               Grakn Labs
+maintainer:           community@grakn.ai
 category:             Database,Graphs
 build-type:           Simple
 extra-source-files:   test/Example.lhs
@@ -27,12 +25,12 @@ library
                       , mtl
                       , http-media
   hs-source-dirs:       src
-  exposed-modules:      Graql
-  other-modules:        Graql.Util
-                      , Graql.Query
-                      , Graql.Pattern
-                      , Graql.Property
-                      , Graql.Client
+  exposed-modules:      Grakn
+  other-modules:        Grakn.Util
+                      , Grakn.Query
+                      , Grakn.Pattern
+                      , Grakn.Property
+                      , Grakn.Client
   default-language:     Haskell2010
 
   default-extensions:   MultiParamTypeClasses
@@ -46,7 +44,7 @@ test-suite test
   main-is:              Main.hs
   hs-source-dirs:       test,src
   build-depends:        base       >= 4.7 && < 5
-                      , graql
+                      , grakn
                       , containers  == 0.5.*
                       , process     == 1.4.*
                       , aeson       == 1.0.*
@@ -76,7 +74,7 @@ test-suite accept
   main-is:              Main.hs
   hs-source-dirs:       features,src
   build-depends:        base       >= 4.7 && < 5
-                      , graql
+                      , grakn
                       , containers  == 0.5.*
                       , process     == 1.4.*
                       , aeson       == 1.0.*

@@ -1,7 +1,7 @@
 module GraqlQuerySpec (spec) where
 
 import           Env
-import           Graql
+import           Grakn
 import           Test.Hspec
 import           Data.Either (isLeft)
 import           Control.Exception (Exception, displayException)
