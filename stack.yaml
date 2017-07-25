@@ -2,27 +2,31 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
-extra-deps:
-- aeson-1.0.2.1
-- lens-4.15.2
-resolver: lts-7.10
-
-compiler-check: match-exact
-compiler: ghc-8.0.1.20161117
 setup-info:
   ghc:
-    linux64:
-      8.0.1.20161117:
-        url: http://downloads.haskell.org/~ghc/8.0.2-rc1/ghc-8.0.1.20161117-x86_64-deb8-linux.tar.xz
-        content-length: 112047972
-        sha1: 6a6e4c9c53c71cc84b6966a9f61948542fd2f15a
-    macosx:
-      8.0.1.20161117:
-        url: https://downloads.haskell.org/~ghc/8.0.2-rc1/ghc-8.0.1.20161117-x86_64-apple-darwin.tar.xz
-        content-length: 113379688
-        sha1: 53ed03d986a49ea680c291540ce44ce469514d7c
     windows64:
       8.0.1.20161117:
         url: https://downloads.haskell.org/~ghc/8.0.2-rc1/ghc-8.0.1.20161117-x86_64-unknown-mingw32.tar.xz
-        content-length: 155652048
         sha1: 74118dd8fd8b5e4c69b25df1644273fbe13177c7
+        content-length: 155652048
+    linux64:
+      8.0.1.20161117:
+        url: http://downloads.haskell.org/~ghc/8.0.2-rc1/ghc-8.0.1.20161117-x86_64-deb8-linux.tar.xz
+        sha1: 6a6e4c9c53c71cc84b6966a9f61948542fd2f15a
+        content-length: 112047972
+    macosx:
+      8.0.1.20161117:
+        url: https://downloads.haskell.org/~ghc/8.0.2-rc1/ghc-8.0.1.20161117-x86_64-apple-darwin.tar.xz
+        sha1: 53ed03d986a49ea680c291540ce44ce469514d7c
+        content-length: 113379688
+extra-deps:
+- aeson-1.0.2.1
+- attoparsec-iso8601-1.0.0.0
+- cabal-doctest-1.0.2
+- http-api-data-0.3.7.1
+- natural-transformation-0.4
+- servant-0.10
+- servant-client-0.10
+compiler-check: match-exact
+compiler: ghc-8.0.1.20161117
+resolver: lts-7.10

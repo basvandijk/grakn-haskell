@@ -21,7 +21,7 @@ library
                       , scientific  == 0.3.*
                       , text        == 1.2.*
                       , regex-posix == 0.95.*
-                      , servant
+                      , servant     == 0.10.*
                       , servant-client
                       , http-client
                       , mtl
@@ -53,7 +53,7 @@ test-suite test
                       , scientific  == 0.3.*
                       , text        == 1.2.*
                       , regex-posix == 0.95.*
-                      , servant
+                      , servant     == 0.10.*
                       , servant-client
                       , http-client
                       , mtl
@@ -83,7 +83,7 @@ test-suite accept
                       , scientific  == 0.3.*
                       , text        == 1.2.*
                       , regex-posix == 0.95.*
-                      , servant
+                      , servant     == 0.10.*
                       , servant-client
                       , http-client
                       , mtl

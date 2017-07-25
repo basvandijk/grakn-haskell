@@ -2,7 +2,8 @@ module Graql
   ( MatchQuery
   , Graph(Graph, keyspace, url)
   , GraknError
-  , Result(MatchResult, AskResult, CountResult)
+  , Result(MatchResult, InsertResult, AskResult, CountResult,
+       DeleteResult)
   , Var
   , Name
   , Value(..)
@@ -27,8 +28,7 @@ module Graql
   ) where
 
 import           Data.Text      (Text)
-import           Graql.Client   (GraknError, Graph (Graph, keyspace, url),
-                                 Result (AskResult, CountResult, MatchResult),
+import           Graql.Client   (GraknError, Graph (Graph, keyspace, url), Result (AskResult, CountResult, DeleteResult, InsertResult, MatchResult),
                                  defaultKeyspace, defaultUrl, execute)
 import           Graql.Pattern
 import           Graql.Property
