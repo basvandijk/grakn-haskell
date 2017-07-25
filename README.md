@@ -1,6 +1,24 @@
-A simple library for building and executing Graql queries.
+# Grakn Haskell Client
 
-Import the modules:
+A Haskell client for [Grakn](http://grakn.ai).
+
+Requires Grakn 0.15.
+
+# Installation
+
+To install the Grakn client, simply add this to your cabal file:
+
+```
+build-depends: grakn
+```
+
+You will also need access to a Grakn database.
+Head [here](https://grakn.ai/pages/documentation/get-started/setup-guide.html)
+to get started with Grakn.
+
+# Quickstart
+
+Begin by importing the client:
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
