@@ -16,7 +16,6 @@ import           Data.Aeson               (FromJSON, ToJSON, encode, parseJSON,
                                            (.:), (.:?))
 import qualified Data.Aeson               as Aeson
 import           Data.Foldable            (asum)
-import           Data.List.NonEmpty       (NonEmpty ((:|)))
 import           Data.Map                 (Map)
 import           Data.Proxy               (Proxy (Proxy))
 import           Data.Text                (Text)
@@ -99,7 +98,7 @@ instance FromJSON Result where
 data GraqlJSON
 
 instance Accept GraqlJSON where
-  contentTypes _ = "application" // "graql+json" :| ["application" // "json"]
+  contentType _ = "application" // "graql+json"
 
 instance ToJSON a => MimeRender GraqlJSON a where
   mimeRender _ = encode
