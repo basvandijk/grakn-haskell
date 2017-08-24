@@ -10,7 +10,7 @@ addons:
 
 before_install:
   # Maybe we need this for deployment
-  - apt-get update
+  - sudo apt-get update
   # Download and unpack the stack executable
   - mkdir -p ~/.local/bin
   - export PATH=$HOME/.local/bin:$PATH
