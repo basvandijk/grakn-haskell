@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 
 # Do not choose a language; we provide our own build tools.
 language: generic
