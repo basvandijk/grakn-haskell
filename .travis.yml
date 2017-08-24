@@ -1,7 +1,6 @@
 sudo: required
 
-# Do not choose a language; we provide our own build tools.
-language: generic
+ghc: 7.4
 
 # Ensure necessary system libraries are present
 addons:
