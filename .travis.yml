@@ -1,5 +1,6 @@
 sudo: required
 
+language: haskell
 ghc: 7.4
 
 # Ensure necessary system libraries are present
