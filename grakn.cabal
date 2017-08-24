@@ -1,6 +1,7 @@
 name:                 grakn
 version:              0.2.0
 synopsis:             A Haskell client for <http://grakn.ai Grakn>
+description:          A Haskell client for <http://grakn.ai Grakn>
 license:              Apache-2.0
 license-file:         LICENSE
 homepage:             https://github.com/graknlabs/grakn-haskell
