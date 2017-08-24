@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 
 language: haskell
 ghc: 7.4
@@ -10,8 +10,6 @@ addons:
       - libgmp-dev
 
 before_install:
-  # Maybe we need this for deployment
-  - sudo apt-get update
   # Download and unpack the stack executable
   - mkdir -p ~/.local/bin
   - export PATH=$HOME/.local/bin:$PATH
