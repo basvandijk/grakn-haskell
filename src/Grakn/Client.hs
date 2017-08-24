@@ -67,16 +67,25 @@ execute (Graph u ks) query = do
   let env = ClientEnv manager u
   runClientM (graqlGet (queryString query) ks) env
 
+type Keyspace = QueryParam "keyspace" String
+
+type Infer = QueryParam "infer" Bool
+
+type Materialise = QueryParam "materialise" Bool
+
+type Body = ReqBody '[ PlainText] String
+
+type GraknParams
+   = Keyspace :> Infer :> Materialise :> Body :> Post '[ GraqlJSON] Result
+
 -- |A type describing the REST API we use to execute queries
-type GraknAPI
-   = "graph" :> "graql" :> "execute" :> QueryParam "query" String :> QueryParam "keyspace" String :> QueryParam "infer" Bool :> QueryParam "materialise" Bool :> Post '[ GraqlJSON] Result
+type GraknAPI = "graph" :> "graql" :> "execute" :> GraknParams
 
 graknAPI :: Proxy GraknAPI
 graknAPI = Proxy
 
 graqlGet :: String -> String -> ClientM Result
-graqlGet query ks =
-  client graknAPI (Just query) (Just ks) (Just False) (Just False)
+graqlGet query ks = client graknAPI (Just ks) (Just False) (Just False) query
 
 instance FromJSON Concept where
   parseJSON (Aeson.Object obj) =
@@ -85,15 +94,14 @@ instance FromJSON Concept where
   parseJSON _ = empty
 
 instance FromJSON Result where
-  parseJSON (Aeson.Object obj) =
+  parseJSON val =
     asum
-      [ MatchResult <$> (obj .: "response")
-      , InsertResult <$> (obj .: "response")
-      , AskResult <$> (obj .: "response")
-      , CountResult <$> (obj .: "response")
+      [ MatchResult <$> parseJSON val
+      , InsertResult <$> parseJSON val
+      , AskResult <$> parseJSON val
+      , CountResult <$> parseJSON val
       , pure DeleteResult
       ]
-  parseJSON _ = empty
 
 data GraqlJSON
 

@@ -1,4 +1,6 @@
-module Grakn.ClientSpec (spec) where
+module Grakn.ClientSpec
+  ( spec
+  ) where
 
 import           Grakn.Client
 import qualified Servant.Client  as S

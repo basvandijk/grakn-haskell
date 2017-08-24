@@ -2,7 +2,7 @@
 
 A Haskell client for [Grakn](http://grakn.ai).
 
-Requires Grakn 0.15.
+Requires Grakn 0.16.
 
 # Installation
 

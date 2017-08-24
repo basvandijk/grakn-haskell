@@ -12,5 +12,7 @@ main = do
     then do
       Summary _ numFailures <- hspecResult Spec.spec
       envStop
-      if numFailures /= 0 then exitFailure else exitSuccess
+      if numFailures /= 0
+        then exitFailure
+        else exitSuccess
     else exitFailure
