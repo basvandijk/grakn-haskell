@@ -11,6 +11,10 @@ build-type:           Simple
 extra-source-files:   test/Example.lhs
 cabal-version:        >=1.10
 
+source-repository head
+  type:     git
+  location: http://github.com/graknlabs/grakn-haskell
+
 library
   build-depends:        base        >= 4.7 && < 5
                       , containers  == 0.5.*

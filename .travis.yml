@@ -1,7 +1,7 @@
 sudo: false
 
 language: haskell
-ghc: 7.4
+ghc: 8.0
 
 # Ensure necessary system libraries are present
 addons:
